@@ -35,11 +35,27 @@ function speakTelugu(text) {
  * SMALL ENTER CLICK + REDIRECT
  ***********************/
 function enterApp() {
+  console.log("ENTER CLICKED"); // debug proof
+
   const click = document.getElementById("enterClick");
   if (click) {
     click.currentTime = 0;
     click.volume = 0.4;
     click.play().catch(() => {});
+  }
+
+  speakTelugu("Grow Together app lo ki swagatham");
+
+  // HARD FALLBACK NAVIGATION
+  setTimeout(() => {
+    const link = document.getElementById("enterFallback");
+    if (link) {
+      link.click(); // always works
+    } else {
+      window.location.href = "./dashboard.html";
+    }
+  }, 300);
+}
   }
 
   // optional soft voice
