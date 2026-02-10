@@ -152,3 +152,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("timetable").value = saved;
   }
 });
+function playSound() {
+  const audio = document.getElementById("clickSound");
+  audio.play();
+
+  speak("Mee app baaga panichestondi");
+}
+
+function speak(text) {
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "te-IN";
+  msg.rate = 0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(msg);
+}
