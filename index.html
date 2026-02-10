@@ -20,11 +20,13 @@
     Welcome! Your app is working correctly.
   </p>
 
-  <button onclick="alert('Sound works after click!')"
-    style="display:block;margin:20px auto;padding:12px 20px;">
-    Test Button
-  </button>
+  <button onclick="playSound()" class="main-btn">
+  🔊 Test Sound
+</button>
 
+<audio id="clickSound">
+  <source src="https://www.soundjay.com/buttons/sounds/button-09.mp3" type="audio/mpeg">
+</audio>
   <script src="growtogether.js"></script>
 
 </body>
