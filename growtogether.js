@@ -1,11 +1,15 @@
 /***********************
- * WELCOME USER
+ * ON PAGE LOAD
  ***********************/
 document.addEventListener("DOMContentLoaded", () => {
+  // Welcome user
   const welcome = document.getElementById("welcome");
   const user = localStorage.getItem("currentUser") || "Friend";
-  if (welcome) welcome.innerText = "Welcome, " + user + " 🌱";
+  if (welcome) {
+    welcome.innerText = "Welcome, " + user + " 🌱";
+  }
 
+  // Load saved timetable
   const saved = localStorage.getItem("myTimeTable");
   if (saved && document.getElementById("timetable")) {
     document.getElementById("timetable").value = saved;
@@ -13,105 +17,135 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /***********************
- * TELUGU VOICE
+ * TELUGU VOICE (SAFE)
  ***********************/
 function speakTelugu(text) {
-  if (!window.speechSynthesis) return;
+  if (!("speechSynthesis" in window)) return;
+
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "te-IN";
   msg.rate = 0.9;
+  msg.pitch = 1;
+
   speechSynthesis.cancel();
   speechSynthesis.speak(msg);
 }
 
 /***********************
- * ENTER APP
+ * SMALL ENTER CLICK + REDIRECT
  ***********************/
 function enterApp() {
-  // tiny smooth click (0.1 sec feel)
   const click = document.getElementById("enterClick");
   if (click) {
     click.currentTime = 0;
-    click.volume = 0.4; // soft, not irritating
+    click.volume = 0.4;
     click.play().catch(() => {});
   }
 
-  // optional gentle Telugu voice
+  // optional soft voice
   speakTelugu("Grow Together app lo ki swagatham");
 
-  // smooth transition
   setTimeout(() => {
     window.location.href = "./dashboard.html";
   }, 300);
 }
+
+/***********************
+ * CONFETTI
+ ***********************/
+function launchConfetti() {
+  const end = Date.now() + 1200;
+
+  (function frame() {
+    confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 } });
+    confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 } });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
 }
 
 /***********************
- * SAVE USAGE
+ * SAVE USAGE + DIALOGUE
  ***********************/
-if (usage <= 0.5) {
-  text =
-    "🔥🔥 SUPER STAR! Phone meedha control ante idhe! Discipline level MAX 💎";
-  voice =
-    "Superr! Phone meedha control undhi. Nuvvu chaala strong.";
-  launchConfetti();
-}
-else if (usage <= 1) {
-  text =
-    "🚀 Excellent! 1 hour lopu undadam ante future meedha focus 💪";
-  voice =
-    "Excellent. Nuvvu future kosam serious ga unnaru.";
-}
-else if (usage <= 2) {
-  text =
-    "🌱 Good! Inka konchem thagginchithe top category lo velthav 😊";
-  voice =
-    "Bagundhi. Inka konchem thagginchagalav.";
-}
-else if (usage <= 4) {
-  text =
-    "⚠️ Average. Phone control improve cheyyali ra 🔄";
-  voice =
-    "Phone usage konchem ekkuva undhi. Improve cheyyali.";
-  color = "#ff9800";
-}
-else {
-  text =
-    "❌ Danger zone! Phone kaadhu future important 🔥";
-  voice =
-    "Phone usage chaala ekkuva ayipoyindhi. Mee future gurinchi alochinchandi.";
-  color = "red";
-}
+function saveUsage() {
+  const usageInput = document.getElementById("usage");
+  const messageBox = document.getElementById("saveMessage");
+  if (!usageInput || !messageBox) return;
+
+  const usage = Number(usageInput.value);
+  const user = localStorage.getItem("currentUser") || "User";
+  const date = new Date().toLocaleDateString();
+
+  if (isNaN(usage) || usage < 0) {
+    messageBox.style.color = "red";
+    messageBox.innerText = "Correct ga hours enter cheyyandi 🙂";
+    speakTelugu("Correct ga hours enter cheyyandi");
+    return;
+  }
+
+  // Firebase save (db MUST be window.db)
+  if (!window.db) {
+    messageBox.innerText = "Firebase not connected 😕";
+    return;
   }
 
   db.collection("usageData").add({
+    name: user,
     usage,
-    date: new Date().toLocaleDateString(),
+    date,
     createdAt: new Date()
   }).then(() => {
-    messageBox.style.color = "#2e7d32";
-    messageBox.innerText = "Saved successfully ✅";
-    speakTelugu("Mee usage save ayindi");
+
+    let text = "";
+    let voice = "";
+    let color = "#2e7d32";
+
+    if (usage <= 0.5) {
+      text = "🔥🔥 SUPER STAR! Phone control level MAX 💎";
+      voice = "Superr. Nuvvu phone meedha control lo unnaru";
+      launchConfetti();
+    } else if (usage <= 1) {
+      text = "🚀 Excellent! 1 hour lopu undhi 💪";
+      voice = "Excellent. Chaala bagundi";
+    } else if (usage <= 2) {
+      text = "🌱 Good! Inka konchem thagginchithe top level";
+      voice = "Bagundhi. Inka konchem thagginchagalav";
+    } else if (usage <= 4) {
+      text = "⚠️ Average. Phone control improve cheyyali";
+      voice = "Phone usage konchem ekkuva undhi";
+      color = "#ff9800";
+    } else {
+      text = "❌ Danger zone! Phone kaadhu future important 🔥";
+      voice = "Phone usage chaala ekkuva ayipoyindhi";
+      color = "red";
+    }
+
+    messageBox.style.color = color;
+    messageBox.innerText = text;
+    speakTelugu(voice);
     usageInput.value = "";
+
+  }).catch(() => {
+    messageBox.style.color = "red";
+    messageBox.innerText = "Something went wrong 😕";
   });
 }
 
 /***********************
- * SAVE TIMETABLE
+ * SAVE TIME TABLE
  ***********************/
 function saveTimetable() {
-  const text = document.getElementById("timetable");
+  const textArea = document.getElementById("timetable");
   const msg = document.getElementById("timetableMsg");
-  if (!text || !msg) return;
+  if (!textArea || !msg) return;
 
-  if (!text.value.trim()) {
-    msg.innerText = "Konchem aina raayi 🙂";
+  if (!textArea.value.trim()) {
     msg.style.color = "red";
+    msg.innerText = "Konchem aina raayi 🙂";
     return;
   }
 
-  localStorage.setItem("myTimeTable", text.value);
-  msg.innerText = "Saved successfully ✅";
+  localStorage.setItem("myTimeTable", textArea.value);
   msg.style.color = "#2e7d32";
+  msg.innerText = "Saved successfully ✅";
   speakTelugu("Mee ideas save ayyai");
 }
