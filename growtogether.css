@@ -1,0 +1,35 @@
+body {
+  font-family: Arial;
+  background: #e8f5e9;
+}
+
+.box {
+  width: 350px;
+  margin: 60px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+input, button {
+  width: 90%;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+button {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+li {
+  background: #f1f8e9;
+  margin: 5px;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 14px;
+}
