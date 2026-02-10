@@ -48,11 +48,22 @@ function launchConfetti() {
  * PLAY SOUND (BUTTON CLICK ONLY)
  ***********************/
 function enterApp() {
-  // soft click sound
+  // optional sound
   const audio = document.getElementById("welcomeSound");
   if (audio) {
     audio.currentTime = 0;
-    audio.play().catch(()=>{});
+    audio.play().catch(() => {});
+  }
+
+  // optional voice
+  speakTelugu("Grow Together app lo ki swagatham");
+
+  // IMPORTANT: correct redirect for GitHub Pages
+  setTimeout(() => {
+    window.location.href = "./dashboard.html";
+  }, 600);
+}
+
   }
 
   // gentle voice (optional)
