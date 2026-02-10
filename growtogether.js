@@ -156,3 +156,4 @@ function saveTimetable() {
   msg.innerText = "Saved successfully ✅";
   speakTelugu("Mee ideas save ayyai");
 }
+<script src="growtogether.js"></script>
