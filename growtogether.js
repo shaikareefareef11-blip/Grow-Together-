@@ -35,13 +35,20 @@ function speakTelugu(text) {
  * SMALL ENTER CLICK + REDIRECT
  ***********************/
 function enterApp() {
-  console.log("ENTER CLICKED"); // debug proof
-
   const click = document.getElementById("enterClick");
   if (click) {
     click.currentTime = 0;
-    click.volume = 0.4;
+    click.volume = 0.4; // soft 0.1 sec click
     click.play().catch(() => {});
+  }
+
+  // English voice
+  speakEnglish("Welcome to Grow Together");
+
+  setTimeout(() => {
+    window.location.href = "./dashboard.html";
+  }, 300);
+}
   }
 
   speakTelugu("Grow Together app lo ki swagatham");
