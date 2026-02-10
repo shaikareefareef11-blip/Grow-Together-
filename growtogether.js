@@ -28,12 +28,22 @@ function speakTelugu(text) {
  * ENTER APP
  ***********************/
 function enterApp() {
-  const audio = document.getElementById("welcomeSound");
-  if (audio) audio.play().catch(() => {});
+  // tiny smooth click (0.1 sec feel)
+  const click = document.getElementById("enterClick");
+  if (click) {
+    click.currentTime = 0;
+    click.volume = 0.4; // soft, not irritating
+    click.play().catch(() => {});
+  }
+
+  // optional gentle Telugu voice
   speakTelugu("Grow Together app lo ki swagatham");
+
+  // smooth transition
   setTimeout(() => {
     window.location.href = "./dashboard.html";
-  }, 600);
+  }, 300);
+}
 }
 
 /***********************
