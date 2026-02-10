@@ -2,7 +2,8 @@
  * ON PAGE LOAD
  ***********************/
 document.addEventListener("DOMContentLoaded", () => {
-  // Welcome user
+
+  // Welcome message
   const welcome = document.getElementById("welcome");
   const user = localStorage.getItem("currentUser") || "Friend";
   if (welcome) {
@@ -17,64 +18,45 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /***********************
- * TELUGU VOICE (SAFE)
+ * ENGLISH VOICE (SAFE)
  ***********************/
-function speakTelugu(text) {
+function speakEnglish(text) {
   if (!("speechSynthesis" in window)) return;
 
   const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = "te-IN";
-  msg.rate = 0.9;
+  msg.lang = "en-US";
+  msg.rate = 0.95;
   msg.pitch = 1;
+  msg.volume = 1;
 
   speechSynthesis.cancel();
   speechSynthesis.speak(msg);
 }
 
 /***********************
- * SMALL ENTER CLICK + REDIRECT
+ * ENTER BUTTON (CLICK + REDIRECT)
  ***********************/
 function enterApp() {
+
+  // Smooth 0.1 sec click sound
   const click = document.getElementById("enterClick");
   if (click) {
     click.currentTime = 0;
-    click.volume = 0.4; // soft 0.1 sec click
+    click.volume = 0.4;
     click.play().catch(() => {});
   }
 
-  // English voice
+  // English welcome voice
   speakEnglish("Welcome to Grow Together");
 
-  setTimeout(() => {
-    window.location.href = "./dashboard.html";
-  }, 300);
-}
-  }
-
-  speakTelugu("Grow Together app lo ki swagatham");
-
-  // HARD FALLBACK NAVIGATION
-  setTimeout(() => {
-    const link = document.getElementById("enterFallback");
-    if (link) {
-      link.click(); // always works
-    } else {
-      window.location.href = "./dashboard.html";
-    }
-  }, 300);
-}
-  }
-
-  // optional soft voice
-  speakTelugu("Grow Together app lo ki swagatham");
-
+  // Redirect
   setTimeout(() => {
     window.location.href = "./dashboard.html";
   }, 300);
 }
 
 /***********************
- * CONFETTI
+ * CONFETTI EFFECT
  ***********************/
 function launchConfetti() {
   const end = Date.now() + 1200;
@@ -87,9 +69,10 @@ function launchConfetti() {
 }
 
 /***********************
- * SAVE USAGE + DIALOGUE
+ * SAVE USAGE + MOTIVATION
  ***********************/
 function saveUsage() {
+
   const usageInput = document.getElementById("usage");
   const messageBox = document.getElementById("saveMessage");
   if (!usageInput || !messageBox) return;
@@ -100,21 +83,22 @@ function saveUsage() {
 
   if (isNaN(usage) || usage < 0) {
     messageBox.style.color = "red";
-    messageBox.innerText = "Correct ga hours enter cheyyandi 🙂";
-    speakTelugu("Correct ga hours enter cheyyandi");
+    messageBox.innerText = "Please enter valid hours 🙂";
+    speakEnglish("Please enter valid hours");
     return;
   }
 
-  // Firebase save (db MUST be window.db)
+  // Firebase check
   if (!window.db) {
     messageBox.innerText = "Firebase not connected 😕";
     return;
   }
 
+  // Save to Firestore
   db.collection("usageData").add({
     name: user,
-    usage,
-    date,
+    usage: usage,
+    date: date,
     createdAt: new Date()
   }).then(() => {
 
@@ -123,28 +107,32 @@ function saveUsage() {
     let color = "#2e7d32";
 
     if (usage <= 0.5) {
-      text = "🔥🔥 SUPER STAR! Phone control level MAX 💎";
-      voice = "Superr. Nuvvu phone meedha control lo unnaru";
+      text = "🔥 SUPER STAR! Amazing phone control 💎";
+      voice = "Super star. You have excellent phone control.";
       launchConfetti();
-    } else if (usage <= 1) {
-      text = "🚀 Excellent! 1 hour lopu undhi 💪";
-      voice = "Excellent. Chaala bagundi";
-    } else if (usage <= 2) {
-      text = "🌱 Good! Inka konchem thagginchithe top level";
-      voice = "Bagundhi. Inka konchem thagginchagalav";
-    } else if (usage <= 4) {
-      text = "⚠️ Average. Phone control improve cheyyali";
-      voice = "Phone usage konchem ekkuva undhi";
+    }
+    else if (usage <= 1) {
+      text = "🚀 Excellent! Less than 1 hour. Keep it up 💪";
+      voice = "Excellent. You are doing very well.";
+    }
+    else if (usage <= 2) {
+      text = "🌱 Good! Reduce a little more to reach top level.";
+      voice = "Good. Try to reduce your phone usage a little more.";
+    }
+    else if (usage <= 4) {
+      text = "⚠️ Average usage. Improve your phone control.";
+      voice = "Your phone usage is a bit high. Improve your focus.";
       color = "#ff9800";
-    } else {
-      text = "❌ Danger zone! Phone kaadhu future important 🔥";
-      voice = "Phone usage chaala ekkuva ayipoyindhi";
+    }
+    else {
+      text = "❌ Danger zone! Your future is more important than the phone 🔥";
+      voice = "Your phone usage is too high. Focus on your future.";
       color = "red";
     }
 
     messageBox.style.color = color;
     messageBox.innerText = text;
-    speakTelugu(voice);
+    speakEnglish(voice);
     usageInput.value = "";
 
   }).catch(() => {
@@ -157,18 +145,19 @@ function saveUsage() {
  * SAVE TIME TABLE
  ***********************/
 function saveTimetable() {
+
   const textArea = document.getElementById("timetable");
   const msg = document.getElementById("timetableMsg");
   if (!textArea || !msg) return;
 
   if (!textArea.value.trim()) {
     msg.style.color = "red";
-    msg.innerText = "Konchem aina raayi 🙂";
+    msg.innerText = "Please write something 🙂";
     return;
   }
 
   localStorage.setItem("myTimeTable", textArea.value);
   msg.style.color = "#2e7d32";
   msg.innerText = "Saved successfully ✅";
-  speakTelugu("Mee ideas save ayyai");
+  speakEnglish("Your ideas have been saved successfully");
 }
