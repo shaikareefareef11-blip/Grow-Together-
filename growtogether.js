@@ -1,50 +1,154 @@
-function login() {
-  let name = document.getElementById("username").value;
-  if (!name) return alert("Enter name");
+/***********************
+ * WELCOME USER
+ ***********************/
+document.addEventListener("DOMContentLoaded", () => {
+  const welcome = document.getElementById("welcome");
+  const user = localStorage.getItem("currentUser") || "Friend";
+  if (welcome) {
+    welcome.innerText = "Welcome, " + user + " 🌱";
+  }
+});
 
-  localStorage.setItem("currentUser", name);
-  window.location.href = "dashboard.html";
+/***********************
+ * TELUGU VOICE (SAFE)
+ ***********************/
+function speakTelugu(text) {
+  if (!("speechSynthesis" in window)) return;
+
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "te-IN";
+  msg.rate = 0.9;
+  msg.pitch = 1;
+
+  setTimeout(() => {
+    speechSynthesis.cancel();
+    speechSynthesis.speak(msg);
+  }, 300);
 }
 
+/***********************
+ * CONFETTI
+ ***********************/
+function launchConfetti() {
+  const end = Date.now() + 1200;
+
+  (function frame() {
+    confetti({
+      particleCount: 6,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 }
+    });
+    confetti({
+      particleCount: 6,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 }
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
+
+/***********************
+ * SAVE USAGE + DIALOGUE
+ ***********************/
 function saveUsage() {
-  let user = localStorage.getItem("currentUser");
-  let usage = document.getElementById("usage").value;
-  if (!usage) return alert("Enter usage");
+  const usageInput = document.getElementById("usage");
+  const messageBox = document.getElementById("saveMessage");
 
-  let today = new Date().toLocaleDateString();
-  let data = JSON.parse(localStorage.getItem("data")) || [];
+  const usage = Number(usageInput.value);
+  const user = localStorage.getItem("currentUser") || "User";
+  const date = new Date().toLocaleDateString();
 
-  data.push({ user, date: today, usage });
-  localStorage.setItem("data", JSON.stringify(data));
+  if (isNaN(usage) || usage < 0) {
+    messageBox.style.color = "red";
+    messageBox.innerText = "Correct ga hours enter cheyyandi 🙂";
+    speakTelugu("Correct ga hours enter cheyyandi");
+    return;
+  }
 
-  displayRecords();
-}
+  // SAVE TO FIREBASE
+  db.collection("usageData").add({
+    name: user,
+    usage: usage,
+    date: date,
+    createdAt: new Date()
+  })
+  .then(() => {
 
-function displayRecords() {
-  let user = localStorage.getItem("currentUser");
-  document.getElementById("welcome").innerText = "Welcome " + user;
+    let text = "";
+    let voice = "";
+    let color = "#2e7d32";
 
-  let data = JSON.parse(localStorage.getItem("data")) || [];
-  let list = document.getElementById("records");
-  list.innerHTML = "";
+    if (usage <= 2) {
+      text =
+        "🔥 Superr!Nuvvu paina unnavaari avvali ante, kindha number thakkuva undali 😊";
+      voice =
+        "Chaala bagundi. Nuvvu paina unnavaari avvali ante, kindha number thakkuva undali";
+      launchConfetti();
+    }
+    else if (usage <= 4) {
+      text =
+        "🙂 Bagundhi… inka konchem thagginchagaligithe top lo untav!";
+      voice =
+        "Bagundhi. Inka konchem thagginchagaligithe top lo untav";
+    }
+    else if (usage <= 6) {
+      text =
+        "⚠️ Konchem ekkuva undhi ra… focus penchali 💪";
+      voice =
+        "Konchem ekkuva undhi. Focus penchali";
+      color = "#ff9800";
+    }
+    else {
+      text =
+        "❌ Phone chaala ekkuva ayipoyindhi… dreams kosam thagginchali 🔥";
+      voice =
+        "Phone chaala ekkuva ayipoyindhi. Mee dreams kosam thagginchali";
+      color = "red";
+    }
 
-  data.filter(d => d.user === user).forEach(d => {
-    let li = document.createElement("li");
-    li.textContent = `${d.date} – ${d.usage} hrs`;
-    list.appendChild(li);
+    messageBox.innerText = text;
+    messageBox.style.color = color;
+    speakTelugu(voice);
+
+    usageInput.value = "";
+
+  })
+  .catch(err => {
+    console.error(err);
+    messageBox.style.color = "red";
+    messageBox.innerText = "Something went wrong 😕";
   });
 }
+/***********************
+ * TIME TABLE / IDEAS
+ ***********************/
+function saveTimetable() {
+  const text = document.getElementById("timetable").value;
+  const msg = document.getElementById("timetableMsg");
 
-function adminView() {
-  let data = JSON.parse(localStorage.getItem("data")) || [];
-  let list = document.getElementById("adminData");
+  if (!text.trim()) {
+    msg.style.color = "red";
+    msg.innerText = "Konchem aina raayi 🙂";
+    return;
+  }
 
-  data.forEach(d => {
-    let li = document.createElement("li");
-    li.textContent = `${d.user} | ${d.date} | ${d.usage} hrs`;
-    list.appendChild(li);
-  });
+  localStorage.setItem("myTimeTable", text);
+
+  msg.style.color = "#2e7d32";
+  msg.innerText = "Saved successfully ✅";
+
+  speakTelugu("Mee ideas save ayyai");
 }
 
-if (document.getElementById("records")) displayRecords();
-if (document.getElementById("adminData")) adminView();
+// Load saved timetable on page open
+document.addEventListener("DOMContentLoaded", () => {
+  const saved = localStorage.getItem("myTimeTable");
+  if (saved && document.getElementById("timetable")) {
+    document.getElementById("timetable").value = saved;
+  }
+});
