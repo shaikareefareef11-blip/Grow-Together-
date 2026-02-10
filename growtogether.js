@@ -7,23 +7,28 @@ document.addEventListener("DOMContentLoaded", () => {
   if (welcome) {
     welcome.innerText = "Welcome, " + user + " 🌱";
   }
+
+  // Load saved timetable
+  const saved = localStorage.getItem("myTimeTable");
+  if (saved && document.getElementById("timetable")) {
+    document.getElementById("timetable").value = saved;
+  }
 });
 
 /***********************
- * TELUGU VOICE (SAFE)
+ * TELUGU VOICE (SINGLE & SAFE)
  ***********************/
 function speakTelugu(text) {
-  if (!("speechSynthesis" in window)) return;
+  if (!window.speechSynthesis) return;
 
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "te-IN";
   msg.rate = 0.9;
   msg.pitch = 1;
+  msg.volume = 1;
 
-  setTimeout(() => {
-    speechSynthesis.cancel();
-    speechSynthesis.speak(msg);
-  }, 300);
+  speechSynthesis.cancel();
+  speechSynthesis.speak(msg);
 }
 
 /***********************
@@ -33,23 +38,23 @@ function launchConfetti() {
   const end = Date.now() + 1200;
 
   (function frame() {
-    confetti({
-      particleCount: 6,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0 }
-    });
-    confetti({
-      particleCount: 6,
-      angle: 120,
-      spread: 55,
-      origin: { x: 1 }
-    });
-
-    if (Date.now() < end) {
-      requestAnimationFrame(frame);
-    }
+    confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 } });
+    confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 } });
+    if (Date.now() < end) requestAnimationFrame(frame);
   })();
+}
+
+/***********************
+ * PLAY SOUND (BUTTON CLICK ONLY)
+ ***********************/
+function playSound() {
+  const audio = document.getElementById("clickSound");
+  if (!audio) return;
+
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
+
+  speakTelugu("Mee Grow Together app baaga panichestondi");
 }
 
 /***********************
@@ -70,7 +75,6 @@ function saveUsage() {
     return;
   }
 
-  // SAVE TO FIREBASE
   db.collection("usageData").add({
     name: user,
     usage: usage,
@@ -84,46 +88,37 @@ function saveUsage() {
     let color = "#2e7d32";
 
     if (usage <= 2) {
-      text =
-        "🔥 Superr!Nuvvu paina unnavaari avvali ante, kindha number thakkuva undali 😊";
-      voice =
-        "Chaala bagundi. Nuvvu paina unnavaari avvali ante, kindha number thakkuva undali";
+      text = "🔥 Superr! Nuvvu paina unnavaari avvali ante kindha number thakkuva undali 😊";
+      voice = "Chaala bagundi. Nuvvu paina unnavaari avvali ante kindha number thakkuva undali";
       launchConfetti();
     }
     else if (usage <= 4) {
-      text =
-        "🙂 Bagundhi… inka konchem thagginchagaligithe top lo untav!";
-      voice =
-        "Bagundhi. Inka konchem thagginchagaligithe top lo untav";
+      text = "🙂 Bagundhi… inka konchem thagginchagaligithe top lo untav!";
+      voice = "Bagundhi. Inka konchem thagginchagaligithe top lo untav";
     }
     else if (usage <= 6) {
-      text =
-        "⚠️ Konchem ekkuva undhi ra… focus penchali 💪";
-      voice =
-        "Konchem ekkuva undhi. Focus penchali";
+      text = "⚠️ Konchem ekkuva undhi ra… focus penchali 💪";
+      voice = "Konchem ekkuva undhi. Focus penchali";
       color = "#ff9800";
     }
     else {
-      text =
-        "❌ Phone chaala ekkuva ayipoyindhi… dreams kosam thagginchali 🔥";
-      voice =
-        "Phone chaala ekkuva ayipoyindhi. Mee dreams kosam thagginchali";
+      text = "❌ Phone chaala ekkuva ayipoyindhi… dreams kosam thagginchali 🔥";
+      voice = "Phone chaala ekkuva ayipoyindhi. Mee dreams kosam thagginchali";
       color = "red";
     }
 
     messageBox.innerText = text;
     messageBox.style.color = color;
     speakTelugu(voice);
-
     usageInput.value = "";
 
   })
-  .catch(err => {
-    console.error(err);
+  .catch(() => {
     messageBox.style.color = "red";
     messageBox.innerText = "Something went wrong 😕";
   });
 }
+
 /***********************
  * TIME TABLE / IDEAS
  ***********************/
@@ -138,31 +133,7 @@ function saveTimetable() {
   }
 
   localStorage.setItem("myTimeTable", text);
-
   msg.style.color = "#2e7d32";
   msg.innerText = "Saved successfully ✅";
-
   speakTelugu("Mee ideas save ayyai");
-}
-
-// Load saved timetable on page open
-document.addEventListener("DOMContentLoaded", () => {
-  const saved = localStorage.getItem("myTimeTable");
-  if (saved && document.getElementById("timetable")) {
-    document.getElementById("timetable").value = saved;
-  }
-});
-function playSound() {
-  const audio = document.getElementById("clickSound");
-  audio.play();
-
-  speak("Mee app baaga panichestondi");
-}
-
-function speak(text) {
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = "te-IN";
-  msg.rate = 0.9;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(msg);
 }
