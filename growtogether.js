@@ -47,14 +47,22 @@ function launchConfetti() {
 /***********************
  * PLAY SOUND (BUTTON CLICK ONLY)
  ***********************/
-function playSound() {
-  const audio = document.getElementById("clickSound");
-  if (!audio) return;
+function enterApp() {
+  // soft click sound
+  const audio = document.getElementById("welcomeSound");
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play().catch(()=>{});
+  }
 
-  audio.currentTime = 0;
-  audio.play().catch(() => {});
+  // gentle voice (optional)
+  speakTelugu("Grow Together app lo ki swagatham");
 
-  speakTelugu("Mee Grow Together app baaga panichestondi");
+  // redirect after small delay
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 800);
+}
 }
 
 /***********************
