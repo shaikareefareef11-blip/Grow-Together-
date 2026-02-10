@@ -39,17 +39,39 @@ function enterApp() {
 /***********************
  * SAVE USAGE
  ***********************/
-function saveUsage() {
-  const usageInput = document.getElementById("usage");
-  const messageBox = document.getElementById("saveMessage");
-  if (!usageInput || !messageBox) return;
-
-  const usage = Number(usageInput.value);
-  if (isNaN(usage) || usage < 0) {
-    messageBox.innerText = "Correct ga hours enter cheyyandi 🙂";
-    messageBox.style.color = "red";
-    speakTelugu("Correct ga hours enter cheyyandi");
-    return;
+if (usage <= 0.5) {
+  text =
+    "🔥🔥 SUPER STAR! Phone meedha control ante idhe! Discipline level MAX 💎";
+  voice =
+    "Superr! Phone meedha control undhi. Nuvvu chaala strong.";
+  launchConfetti();
+}
+else if (usage <= 1) {
+  text =
+    "🚀 Excellent! 1 hour lopu undadam ante future meedha focus 💪";
+  voice =
+    "Excellent. Nuvvu future kosam serious ga unnaru.";
+}
+else if (usage <= 2) {
+  text =
+    "🌱 Good! Inka konchem thagginchithe top category lo velthav 😊";
+  voice =
+    "Bagundhi. Inka konchem thagginchagalav.";
+}
+else if (usage <= 4) {
+  text =
+    "⚠️ Average. Phone control improve cheyyali ra 🔄";
+  voice =
+    "Phone usage konchem ekkuva undhi. Improve cheyyali.";
+  color = "#ff9800";
+}
+else {
+  text =
+    "❌ Danger zone! Phone kaadhu future important 🔥";
+  voice =
+    "Phone usage chaala ekkuva ayipoyindhi. Mee future gurinchi alochinchandi.";
+  color = "red";
+}
   }
 
   db.collection("usageData").add({
