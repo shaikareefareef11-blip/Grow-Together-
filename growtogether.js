@@ -3,14 +3,21 @@
  ***********************/
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Welcome message
   const welcome = document.getElementById("welcome");
   const user = localStorage.getItem("currentUser") || "Friend";
+
+  const hour = new Date().getHours();
+  let greeting = "Hello";
+
+  if (hour < 12) greeting = "Good morning";
+  else if (hour < 17) greeting = "Good afternoon";
+  else greeting = "Good evening";
+
   if (welcome) {
-    welcome.innerText = "Welcome, " + user + " 🌱";
+    welcome.innerText = greeting + ", " + user + " 🌱";
+    speakEnglish(greeting + " " + user + ". Stay focused and grow strong.");
   }
 
-  // Load saved timetable
   const saved = localStorage.getItem("myTimeTable");
   if (saved && document.getElementById("timetable")) {
     document.getElementById("timetable").value = saved;
@@ -18,7 +25,36 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /***********************
- * ENGLISH VOICE (SAFE)
+ * SAVE NAME + VOICE
+ ***********************/
+function saveName() {
+
+  const nameInput = document.getElementById("nameInput");
+  const msg = document.getElementById("nameMsg");
+
+  if (!nameInput || !msg) return;
+
+  const name = nameInput.value.trim();
+
+  if (!name) {
+    msg.style.color = "red";
+    msg.innerText = "Please enter your name 🙂";
+    speakEnglish("Please enter your name");
+    return;
+  }
+
+  localStorage.setItem("currentUser", name);
+
+  msg.style.color = "#2e7d32";
+  msg.innerText = "Welcome " + name + " 🌱";
+
+  speakEnglish("Welcome " + name + ". Let's grow together!");
+
+  nameInput.value = "";
+}
+
+/***********************
+ * ENGLISH VOICE
  ***********************/
 function speakEnglish(text) {
   if (!("speechSynthesis" in window)) return;
@@ -34,11 +70,10 @@ function speakEnglish(text) {
 }
 
 /***********************
- * ENTER BUTTON (CLICK + REDIRECT)
+ * ENTER BUTTON
  ***********************/
 function enterApp() {
 
-  // Smooth 0.1 sec click sound
   const click = document.getElementById("enterClick");
   if (click) {
     click.currentTime = 0;
@@ -46,17 +81,15 @@ function enterApp() {
     click.play().catch(() => {});
   }
 
-  // English welcome voice
-  speakEnglish("Welcome to Grow Together");
+  speakEnglish("Opening dashboard");
 
-  // Redirect
   setTimeout(() => {
     window.location.href = "./dashboard.html";
   }, 300);
 }
 
 /***********************
- * CONFETTI EFFECT
+ * CONFETTI
  ***********************/
 function launchConfetti() {
   const end = Date.now() + 1200;
@@ -69,7 +102,7 @@ function launchConfetti() {
 }
 
 /***********************
- * SAVE USAGE + MOTIVATION
+ * SAVE USAGE
  ***********************/
 function saveUsage() {
 
@@ -88,13 +121,11 @@ function saveUsage() {
     return;
   }
 
-  // Firebase check
   if (!window.db) {
     messageBox.innerText = "Firebase not connected 😕";
     return;
   }
 
-  // Save to Firestore
   db.collection("usageData").add({
     name: user,
     usage: usage,
@@ -142,7 +173,7 @@ function saveUsage() {
 }
 
 /***********************
- * SAVE TIME TABLE
+ * SAVE TIMETABLE
  ***********************/
 function saveTimetable() {
 
