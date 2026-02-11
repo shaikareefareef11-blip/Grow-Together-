@@ -8,25 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hour = new Date().getHours();
   let greeting = "Hello";
-
   if (hour < 12) greeting = "Good morning";
   else if (hour < 17) greeting = "Good afternoon";
   else greeting = "Good evening";
-
-  if (welcome) {
-    welcome.innerText = greeting + ", " + user + " 🌱";
-    speakEnglish(greeting + " " + user + ". Stay focused and grow strong.");
-  }
-
-  const saved = localStorage.getItem("myTimeTable");
-  if (saved && document.getElementById("timetable")) {
-    document.getElementById("timetable").value = saved;
-  }
-});
-
-/***********************
- * SAVE NAME + VOICE
- ***********************/
 function saveName() {
 
   const nameInput = document.getElementById("nameInput");
@@ -52,11 +36,26 @@ function saveName() {
 
   nameInput.value = "";
 }
+  if (welcome) {
+    welcome.innerText = greeting + ", " + user + " 🌱";
+    speakEnglish(greeting + " " + user + ". Stay focused and grow strong.");
+  }
+
+  const saved = localStorage.getItem("myTimeTable");
+  if (saved && document.getElementById("timetable")) {
+    document.getElementById("timetable").value = saved;
+  }
+});
+
+/***********************
+ * SAVE NAME + VOICE
+ ***********************/
+
 
 /***********************
  * ENGLISH VOICE
  ***********************/
-function speakEnglish(text) {
+7 speakEnglish(text) {
   if (!("speechSynthesis" in window)) return;
 
   const msg = new SpeechSynthesisUtterance(text);
@@ -72,13 +71,7 @@ function speakEnglish(text) {
 /***********************
  * ENTER BUTTON
  ***********************/
-function enterApp() {
 
-  const click = document.getElementById("enterClick");
-  if (click) {
-    click.currentTime = 0;
-    click.volume = 0.4;
-    click.play().catch(() => {});
   }
 
   speakEnglish("Opening dashboard");
