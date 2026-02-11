@@ -1,4 +1,4 @@
-  /* ===============================
+/* ===============================
    ON PAGE LOAD
 ================================= */
 document.addEventListener("DOMContentLoaded", function () {
@@ -7,15 +7,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const user = localStorage.getItem("currentUser");
 
   // Show only: Welcome Arif
-  if (welcome && user) {
-    welcome.innerText = "Welcome " + user;
+  if (welcome) {
+    if (user && user.trim() !== "") {
+      welcome.innerText = "Welcome " + user;
+    } else {
+      welcome.innerText = "Welcome";
+    }
   }
 
-  // Load saved timetable
-  const saved = localStorage.getItem("myTimeTable");
+  // Load saved timetable safely
   const timetable = document.getElementById("timetable");
+  const saved = localStorage.getItem("myTimeTable");
 
-  if (saved && timetable) {
+  if (timetable && saved) {
     timetable.value = saved;
   }
 
@@ -28,14 +32,17 @@ document.addEventListener("DOMContentLoaded", function () {
 function toggleGrand(panelId, btn){
 
   const panel = document.getElementById(panelId);
-  const arrow = btn.querySelector(".arrow");
+  if (!panel) return;
 
-  if(panel.style.maxHeight){
+  const arrow = btn ? btn.querySelector(".arrow") : null;
+
+  if (panel.style.maxHeight && panel.style.maxHeight !== "0px") {
     panel.style.maxHeight = null;
-    if(arrow) arrow.style.transform="rotate(0deg)";
-  } else {
+    if (arrow) arrow.style.transform = "rotate(0deg)";
+  } 
+  else {
     panel.style.maxHeight = panel.scrollHeight + "px";
-    if(arrow) arrow.style.transform="rotate(180deg)";
+    if (arrow) arrow.style.transform = "rotate(180deg)";
   }
 }
 
@@ -48,20 +55,20 @@ function saveTimetable(){
   const textArea = document.getElementById("timetable");
   const msg = document.getElementById("timetableMsg");
 
-  if(!textArea || !msg) return;
+  if (!textArea || !msg) return;
 
   const text = textArea.value.trim();
 
-  if(text === ""){
-    msg.innerText="Please write something";
-    msg.style.color="red";
+  if (text === "") {
+    msg.innerText = "Please write something";
+    msg.style.color = "red";
     return;
   }
 
   localStorage.setItem("myTimeTable", text);
 
-  msg.innerText="Saved successfully";
-  msg.style.color="green";
+  msg.innerText = "Saved successfully";
+  msg.style.color = "green";
 }
 
 
@@ -73,26 +80,26 @@ function saveUsage(){
   const usageInput = document.getElementById("usage");
   const msg = document.getElementById("saveMessage");
 
-  if(!usageInput || !msg) return;
+  if (!usageInput || !msg) return;
 
-  const usage = Number(usageInput.value);
+  const usage = parseFloat(usageInput.value);
 
-  if(isNaN(usage) || usage < 0){
-    msg.innerText="Enter valid hours";
-    msg.style.color="red";
+  if (isNaN(usage) || usage < 0) {
+    msg.innerText = "Enter valid hours";
+    msg.style.color = "red";
     return;
   }
 
   let text = "";
   let color = "green";
 
-  if(usage <= 1){
+  if (usage <= 1) {
     text = "Excellent control!";
   }
-  else if(usage <= 3){
+  else if (usage <= 3) {
     text = "Good, improve more.";
   }
-  else{
+  else {
     text = "Reduce usage for better future.";
     color = "red";
   }
