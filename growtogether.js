@@ -152,3 +152,8 @@ function saveUsage(){
 
   usageInput.value="";
 }
+const firebaseConfig = {
+  apiKey: "AIza....",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+};
