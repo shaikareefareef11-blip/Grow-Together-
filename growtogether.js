@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const welcome = document.getElementById("welcome");
   const user = localStorage.getItem("currentUser");
 
-  // Show only: Welcome Arif
+  // Show Welcome Name
   if (welcome) {
     if (user && user.trim() !== "") {
       welcome.innerText = "Welcome " + user;
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Load saved timetable safely
+  // Load saved timetable
   const timetable = document.getElementById("timetable");
   const saved = localStorage.getItem("myTimeTable");
 
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 /* ===============================
-   ACCORDION
+   ACCORDION (SAFE VERSION)
 ================================= */
 function toggleGrand(panelId, btn){
 
@@ -37,12 +37,20 @@ function toggleGrand(panelId, btn){
   const arrow = btn ? btn.querySelector(".arrow") : null;
 
   if (panel.style.maxHeight && panel.style.maxHeight !== "0px") {
+
     panel.style.maxHeight = null;
-    if (arrow) arrow.style.transform = "rotate(0deg)";
-  } 
-  else {
+
+    if (arrow) {
+      arrow.style.transform = "rotate(0deg)";
+    }
+
+  } else {
+
     panel.style.maxHeight = panel.scrollHeight + "px";
-    if (arrow) arrow.style.transform = "rotate(180deg)";
+
+    if (arrow) {
+      arrow.style.transform = "rotate(180deg)";
+    }
   }
 }
 
@@ -67,7 +75,7 @@ function saveTimetable(){
 
   localStorage.setItem("myTimeTable", text);
 
-  msg.innerText = "Saved successfully";
+  msg.innerText = "Saved successfully ✅";
   msg.style.color = "green";
 }
 
@@ -90,17 +98,17 @@ function saveUsage(){
     return;
   }
 
-  let text = "";
+  let text;
   let color = "green";
 
   if (usage <= 1) {
-    text = "Excellent control!";
+    text = "Excellent control! 🚀";
   }
   else if (usage <= 3) {
-    text = "Good, improve more.";
+    text = "Good, improve more 🌱";
   }
   else {
-    text = "Reduce usage for better future.";
+    text = "Reduce usage for better future 🔥";
     color = "red";
   }
 
