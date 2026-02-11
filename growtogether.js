@@ -107,4 +107,3 @@ msg.style.color = color;
 usageInput.value = "";
 }
 
-Correct this All Code.
