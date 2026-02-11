@@ -146,24 +146,15 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script src="growtogether.js"></script>
-
 <script>
-function toggleGrand(panelId, btn) {
-  const panel = document.getElementById(panelId);
-  const arrow = btn.querySelector(".arrow");
+  const firebaseConfig = {
+    apiKey: "YOUR_REAL_API_KEY",
+    authDomain: "YOUR_REAL_AUTH_DOMAIN",
+    projectId: "YOUR_REAL_PROJECT_ID"
+  };
 
-  if (panel.style.maxHeight) {
-    panel.style.maxHeight = null;
-    panel.style.paddingTop = "0";
-    panel.style.paddingBottom = "0";
-    arrow.style.transform = "rotate(0deg)";
-  } else {
-    panel.style.maxHeight = panel.scrollHeight + "px";
-    panel.style.paddingTop = "20px";
-    panel.style.paddingBottom = "20px";
-    arrow.style.transform = "rotate(180deg)";
-  }
-}
+  firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
 </script>
 
 </body>
