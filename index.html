@@ -1,88 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Grow Together</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="growtogether.css">
-
-  <style>
-    body{
-      margin:0;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:linear-gradient(135deg,#e8f5e9,#ffffff);
-      font-family:Arial, sans-serif;
-    }
-
-    .login-box{
-      background:white;
-      padding:35px 25px;
-      border-radius:20px;
-      text-align:center;
-      box-shadow:0 15px 40px rgba(0,0,0,0.2);
-      width:90%;
-      max-width:320px;
-    }
-
-    .login-box input{
-      width:100%;
-      padding:14px;
-      border-radius:12px;
-      border:1px solid #ccc;
-      margin-top:15px;
-      text-align:center;
-      font-size:16px;
-    }
-
-    .login-box button{
-      margin-top:20px;
-      width:100%;
-      padding:14px;
-      border:none;
-      border-radius:14px;
-      background:#2e7d32;
-      color:white;
-      font-size:16px;
-      cursor:pointer;
-      transition:0.2s;
-    }
-
-    .login-box button:active{
-      transform:scale(0.96);
-    }
-
-    #nameMsg{
-      margin-top:15px;
-      font-weight:bold;
-    }
-  </style>
 </head>
 
-<body>
+<body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#e8f5e9;font-family:Arial;">
 
-  <div class="login-box">
+  <div style="background:white;padding:30px;border-radius:20px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.2);width:90%;max-width:320px;">
 
     <h1 style="color:#1b5e20;">🌱 Grow Together</h1>
-    <h3>👋 Enter Your Name</h3>
+    <h3>Enter Your Name</h3>
 
     <input 
       type="text" 
       id="nameInput" 
       placeholder="Your Name"
-      onkeypress="if(event.key==='Enter'){saveName();}"
+      style="width:100%;padding:14px;border-radius:12px;border:1px solid #ccc;margin-top:15px;text-align:center;"
     >
 
-    <button onclick="saveName()">Continue</button>
+    <button 
+      onclick="saveName()" 
+      style="margin-top:20px;width:100%;padding:14px;border:none;border-radius:14px;background:#2e7d32;color:white;font-size:16px;">
+      Continue
+    </button>
 
-    <p id="nameMsg"></p>
+    <p id="nameMsg" style="margin-top:15px;font-weight:bold;"></p>
 
   </div>
 
-  <script src="growtogether.js"></script>
+<script>
+function saveName(){
+
+  const nameInput = document.getElementById("nameInput");
+  const msg = document.getElementById("nameMsg");
+
+  if(!nameInput){
+    alert("Input not found");
+    return;
+  }
+
+  const name = nameInput.value.trim();
+
+  if(name === ""){
+    msg.innerText = "Please enter your name";
+    msg.style.color = "red";
+    return;
+  }
+
+  localStorage.setItem("currentUser", name);
+
+  window.location.href = "dashboard.html";
+}
+</script>
 
 </body>
 </html>
