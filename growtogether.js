@@ -1,52 +1,58 @@
-/* ===============================
-   SPEAK ENGLISH VOICE
+/* =================================
+   SPEAK ENGLISH VOICE (SAFE VERSION)
 ================================= */
-function speakEnglish(text){
+function speakEnglish(text) {
   if (!("speechSynthesis" in window)) return;
+
+  window.speechSynthesis.cancel();
 
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "en-US";
   msg.rate = 0.95;
   msg.pitch = 1;
 
-  window.speechSynthesis.cancel();
   window.speechSynthesis.speak(msg);
 }
 
-/* ===============================
-   ON PAGE LOAD (DASHBOARD)
+
+/* =================================
+   ON PAGE LOAD (SAFE FOR ALL PAGES)
 ================================= */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
   const welcome = document.getElementById("welcome");
+  const timetableBox = document.getElementById("timetable");
   const user = localStorage.getItem("currentUser");
 
+  // Welcome text
   if (welcome && user) {
     welcome.innerText = "Welcome, " + user + " 🌱";
-
-    // Speak name when dashboard opens
     speakEnglish("Welcome back " + user);
   }
 
-  const saved = localStorage.getItem("myTimeTable");
-  if (saved && document.getElementById("timetable")) {
-    document.getElementById("timetable").value = saved;
+  // Load saved timetable
+  if (timetableBox) {
+    const saved = localStorage.getItem("myTimeTable");
+    if (saved) {
+      timetableBox.value = saved;
+    }
   }
 });
 
-/* ===============================
+
+/* =================================
    SAVE NAME (INDEX PAGE)
 ================================= */
-function saveName(){
+function saveName() {
 
   const nameInput = document.getElementById("nameInput");
   const msg = document.getElementById("nameMsg");
 
-  if(!nameInput) return;
+  if (!nameInput || !msg) return;
 
   const name = nameInput.value.trim();
 
-  if(name === ""){
+  if (name === "") {
     msg.innerText = "Please enter your name 🙂";
     msg.style.color = "red";
     speakEnglish("Please enter your name");
@@ -60,72 +66,88 @@ function saveName(){
 
   speakEnglish("Hello " + name + ", welcome to Grow Together");
 
-  setTimeout(() => {
+  setTimeout(function () {
     window.location.href = "dashboard.html";
   }, 1500);
 }
 
-/* ===============================
+
+/* =================================
    ACCORDION
 ================================= */
-function toggleGrand(panelId, btn){
+function toggleGrand(panelId, btn) {
 
   const panel = document.getElementById(panelId);
+  if (!panel) return;
+
   const arrow = btn.querySelector(".arrow");
 
-  if(panel.style.maxHeight){
+  if (panel.style.maxHeight) {
     panel.style.maxHeight = null;
-    arrow.style.transform="rotate(0deg)";
+    if (arrow) arrow.style.transform = "rotate(0deg)";
   } else {
     panel.style.maxHeight = panel.scrollHeight + "px";
-    arrow.style.transform="rotate(180deg)";
+    if (arrow) arrow.style.transform = "rotate(180deg)";
   }
 }
 
-/* ===============================
+
+/* =================================
    SAVE TIMETABLE
 ================================= */
-function saveTimetable(){
+function saveTimetable() {
 
-  const text = document.getElementById("timetable").value;
+  const textarea = document.getElementById("timetable");
   const msg = document.getElementById("timetableMsg");
 
-  if(!text.trim()){
-    msg.innerText="Please write something 🙂";
-    msg.style.color="red";
+  if (!textarea || !msg) return;
+
+  const text = textarea.value.trim();
+
+  if (text === "") {
+    msg.innerText = "Please write something 🙂";
+    msg.style.color = "red";
     return;
   }
 
   localStorage.setItem("myTimeTable", text);
-  msg.innerText="Saved successfully ✅";
-  msg.style.color="green";
+
+  msg.innerText = "Saved successfully ✅";
+  msg.style.color = "green";
 
   speakEnglish("Your timetable has been saved");
 }
 
-/* ===============================
+
+/* =================================
    SAVE USAGE
 ================================= */
-function saveUsage(){
+function saveUsage() {
 
   const usageInput = document.getElementById("usage");
   const msg = document.getElementById("saveMessage");
+
+  if (!usageInput || !msg) return;
+
   const usage = Number(usageInput.value);
 
-  if(isNaN(usage) || usage < 0){
-    msg.innerText="Enter valid hours";
-    msg.style.color="red";
+  if (isNaN(usage) || usage < 0) {
+    msg.innerText = "Enter valid hours";
+    msg.style.color = "red";
     return;
   }
 
   const user = localStorage.getItem("currentUser") || "User";
 
-  if(window.db){
-    db.collection("usageData").add({
-      name:user,
-      usage:usage,
-      date:new Date().toLocaleDateString(),
-      createdAt:new Date()
+  // Save to Firebase (if connected)
+  if (window.db) {
+    window.db.collection("usageData").add({
+      name: user,
+      usage: usage,
+      date: new Date().toLocaleDateString(),
+      createdAt: new Date()
+    }).catch(function () {
+      console.log("Firebase save failed");
     });
   }
 
@@ -133,13 +155,15 @@ function saveUsage(){
   let voice = "";
   let color = "green";
 
-  if(usage <= 1){
+  if (usage <= 1) {
     text = "🚀 Excellent control!";
-    voice = "Excellent control";
-  } else if(usage <= 3){
-    text = "🌱 Good, improve more.";
+    voice = "Excellent control!";
+  }
+  else if (usage <= 3) {
+    text = "🌱 Good. Improve more.";
     voice = "Good. Try to improve more.";
-  } else {
+  }
+  else {
     text = "🔥 Reduce usage for better future.";
     voice = "Please reduce your mobile usage.";
     color = "red";
@@ -150,10 +174,5 @@ function saveUsage(){
 
   speakEnglish(voice);
 
-  usageInput.value="";
+  usageInput.value = "";
 }
-const firebaseConfig = {
-  apiKey: "AIza....",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-};
