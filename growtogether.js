@@ -2,16 +2,22 @@
    SPEAK ENGLISH VOICE
 ================================= */
 function speakEnglish(text){
-  if(!("speechSynthesis" in window)) return;
+
+  if (!("speechSynthesis" in window)) return;
 
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "en-US";
   msg.rate = 0.95;
   msg.pitch = 1;
+  msg.volume = 1;
 
-  speechSynthesis.cancel();
-  speechSynthesis.speak(msg);
+  // Stop previous voice
+  window.speechSynthesis.cancel();
+
+  // Speak
+  window.speechSynthesis.speak(msg);
 }
+
 
 /* ===============================
    SAVE NAME FUNCTION
@@ -21,29 +27,34 @@ function saveName(){
   const nameInput = document.getElementById("nameInput");
   const msg = document.getElementById("nameMsg");
 
-  if(!nameInput || !msg) return;
+  // Safety check
+  if (!nameInput) return;
 
   const name = nameInput.value.trim();
 
-  if(!name){
-    msg.style.color = "red";
-    msg.innerText = "Please enter your name 🙂";
+  if (!name){
+    if(msg){
+      msg.style.color = "red";
+      msg.innerText = "Please enter your name 🙂";
+    }
     speakEnglish("Please enter your name");
     return;
   }
 
-  // Save name
+  // Save to localStorage
   localStorage.setItem("currentUser", name);
 
-  // Show welcome message
-  msg.style.color = "#2e7d32";
-  msg.innerText = "Welcome " + name + " 🌱";
+  // Show welcome text
+  if(msg){
+    msg.style.color = "#2e7d32";
+    msg.innerText = "Welcome " + name + " 🌱";
+  }
 
   // Speak name
   speakEnglish("Hello " + name + ", welcome to Grow Together");
 
-  // Optional redirect after 1.2 sec
-  setTimeout(()=>{
-    window.location.href = "dashboard.html";
-  },1200);
+  // Redirect after voice finishes (better method)
+  setTimeout(function(){
+      window.location.href = "dashboard.html";
+  }, 1500);
 }
