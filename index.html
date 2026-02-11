@@ -11,12 +11,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="growtogether.css">
+</head>
 
-  <style>
-    body{
-      margin:0;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:linear-gradient(135deg,#e8
+<body>
+
+<div class="box">
+
+  <h1>🌱 Grow Together</h1>
+
+  <!-- NAME INPUT -->
+  <h2>👋 Enter Your Name</h2>
+
+  <input type="text" id="nameInput" placeholder="Type your name here">
+
+  <button onclick="saveName()">Continue</button>
+
+  <p id="nameMsg" style="margin-top:10px;font-weight:bold;"></p>
+
+  <button onclick="enterApp()">Enter App</button>
+
+</div>
+
+<!-- Click Sound -->
+<audio id="enterClick" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
+
+<script src="growtogether.js"></script>
+</body>
+</html>
