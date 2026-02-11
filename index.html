@@ -9,3 +9,80 @@
 
   <style>
     body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:linear-gradient(135deg,#e8f5e9,#ffffff);
+      font-family:Arial, sans-serif;
+    }
+
+    .login-box{
+      background:white;
+      padding:35px 25px;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:0 15px 40px rgba(0,0,0,0.2);
+      width:90%;
+      max-width:320px;
+    }
+
+    .login-box input{
+      width:100%;
+      padding:14px;
+      border-radius:12px;
+      border:1px solid #ccc;
+      margin-top:15px;
+      text-align:center;
+      font-size:16px;
+    }
+
+    .login-box button{
+      margin-top:20px;
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:14px;
+      background:#2e7d32;
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    .login-box button:active{
+      transform:scale(0.96);
+    }
+
+    #nameMsg{
+      margin-top:15px;
+      font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-box">
+
+    <h1 style="color:#1b5e20;">🌱 Grow Together</h1>
+    <h3>👋 Enter Your Name</h3>
+
+    <input 
+      type="text" 
+      id="nameInput" 
+      placeholder="Your Name"
+      onkeypress="if(event.key==='Enter'){saveName();}"
+    >
+
+    <button onclick="saveName()">Continue</button>
+
+    <p id="nameMsg"></p>
+
+  </div>
+
+  <script src="growtogether.js"></script>
+
+</body>
+</html>
