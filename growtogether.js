@@ -1,35 +1,26 @@
-/* ===============================
-   SPEAK ENGLISH VOICE
-================================= */
-function speakEnglish(text){
-  if (!("speechSynthesis" in window)) return;
-
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = "en-US";
-  msg.rate = 0.95;
-
-  speechSynthesis.cancel();
-  speechSynthesis.speak(msg);
-}
-
-/* ===============================
+  /* ===============================
    ON PAGE LOAD
 ================================= */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
   const welcome = document.getElementById("welcome");
   const user = localStorage.getItem("currentUser");
 
+  // Show only: Welcome Arif
   if (welcome && user) {
-    welcome.innerText = "Welcome, " + user + " 🌱";
-    speakEnglish("Welcome back " + user);
+    welcome.innerText = "Welcome " + user;
   }
 
+  // Load saved timetable
   const saved = localStorage.getItem("myTimeTable");
-  if (saved && document.getElementById("timetable")) {
-    document.getElementById("timetable").value = saved;
+  const timetable = document.getElementById("timetable");
+
+  if (saved && timetable) {
+    timetable.value = saved;
   }
+
 });
+
 
 /* ===============================
    ACCORDION
@@ -41,12 +32,13 @@ function toggleGrand(panelId, btn){
 
   if(panel.style.maxHeight){
     panel.style.maxHeight = null;
-    arrow.style.transform="rotate(0deg)";
+    if(arrow) arrow.style.transform="rotate(0deg)";
   } else {
     panel.style.maxHeight = panel.scrollHeight + "px";
-    arrow.style.transform="rotate(180deg)";
+    if(arrow) arrow.style.transform="rotate(180deg)";
   }
 }
+
 
 /* ===============================
    SAVE TIMETABLE
@@ -61,18 +53,17 @@ function saveTimetable(){
   const text = textArea.value.trim();
 
   if(text === ""){
-    msg.innerText="Please write something 🙂";
+    msg.innerText="Please write something";
     msg.style.color="red";
     return;
   }
 
   localStorage.setItem("myTimeTable", text);
 
-  msg.innerText="Saved successfully ✅";
+  msg.innerText="Saved successfully";
   msg.style.color="green";
-
-  speakEnglish("Your timetable has been saved");
 }
+
 
 /* ===============================
    SAVE USAGE (LOCAL ONLY)
@@ -93,27 +84,21 @@ function saveUsage(){
   }
 
   let text = "";
-  let voice = "";
   let color = "green";
 
   if(usage <= 1){
-    text = "🚀 Excellent control!";
-    voice = "Excellent control";
+    text = "Excellent control!";
   }
   else if(usage <= 3){
-    text = "🌱 Good, improve more.";
-    voice = "Good. Try to improve more.";
+    text = "Good, improve more.";
   }
   else{
-    text = "🔥 Reduce usage for better future.";
-    voice = "Please reduce your mobile usage.";
+    text = "Reduce usage for better future.";
     color = "red";
   }
 
   msg.innerText = text;
   msg.style.color = color;
-
-  speakEnglish(voice);
 
   usageInput.value = "";
 }
